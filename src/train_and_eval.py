@@ -37,6 +37,9 @@ def train_and_eval_cqa(
     early_stop_metric,
     early_stop_patience,
     early_stop_mode,
+    train_size,
+    val_size,
+    test_size,
 ):
     hparams = Namespace(
         learning_rate=learning_rate,
@@ -50,6 +53,10 @@ def train_and_eval_cqa(
         weight_decay=weight_decay,
         warmup_ratio=warmup_ratio,
         loss_threshold=loss_threshold,
+        train_size=train_size,
+        val_size=val_size,
+        test_size=test_size,
+
     )
     seed_everything(hparams.seed)
 

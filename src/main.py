@@ -146,6 +146,24 @@ def cli():
         "in max mode it will stop when the quantity monitored has stopped increasing;"
     )
 )
+@click.option(
+    "--train_size",
+    type=int,
+    default=-1,
+    help=("Number of train samples to use, -1 to use all. (default: -1)")
+)
+@click.option(
+    "--val_size",
+    type=int,
+    default=-1,
+    help=("Number of validation samples to use, -1 to use all. (default: -1)")
+)
+@click.option(
+    "--test_size",
+    type=int,
+    default=-1,
+    help=("Number of test samples to use, -1 to use all. (default: -1)")
+)
 def plausibility_roberta_cqa(
     do_train,
     do_test,
@@ -170,6 +188,9 @@ def plausibility_roberta_cqa(
     early_stop_metric,
     early_stop_patience,
     early_stop_mode,
+    train_size,
+    val_size,
+    test_size,
 ):
     train_and_eval_cqa(
         do_train,
@@ -195,6 +216,9 @@ def plausibility_roberta_cqa(
         early_stop_metric,
         early_stop_patience,
         early_stop_mode,
+        train_size,
+        val_size,
+        test_size,
     )
 
 

@@ -4,7 +4,7 @@ from os import cpu_count
 import torch
 import transformers
 from transformers.optimization import AdamW, get_linear_schedule_with_warmup
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 import pytorch_lightning as pl
 from pytorch_lightning.metrics.functional import accuracy, f1_score
 
@@ -15,6 +15,8 @@ from loss import ssm_loss
 """
 Adapted from HuggingFace source code.
 """
+
+
 class RobertaForMaskedLM(transformers.RobertaForMaskedLM):
     def forward(
         self,
@@ -98,13 +100,10 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
         self.hparams = hparams
 
         self.tokenizer = transformers.RobertaTokenizer.from_pretrained(
-            hparams.model_name,
-            cache_dir="/tmp/",
+            hparams.model_name, cache_dir="/tmp/",
         )
         self.roberta = RobertaForMaskedLM.from_pretrained(
-            hparams.model_name,
-            cache_dir="/tmp/",
-            return_dict=True,
+            hparams.model_name, cache_dir="/tmp/", return_dict=True,
         )
         self.train_data = None
         self.val_data = None
@@ -116,7 +115,11 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
 
     def train_dataloader(self):
         return DataLoader(
-            dataset=self.train_data,
+            dataset=(
+                self.train_data
+                if self.hparams.train_size < 0
+                else Subset(self.train_data, range(0, self.hparams.train_size))
+            ),
             batch_size=self.batch_size,
             shuffle=True,
             num_workers=cpu_count(),
@@ -124,7 +127,11 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
 
     def val_dataloader(self):
         return DataLoader(
-            dataset=self.val_data,
+            dataset=(
+                self.val_data
+                if self.hparams.val_size < 0
+                else Subset(self.val_data, range(0, self.hparams.val_size))
+            ),
             batch_size=self.batch_size,
             shuffle=False,
             num_workers=cpu_count(),
@@ -132,7 +139,11 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
 
     def test_dataloader(self):
         return DataLoader(
-            dataset=self.test_data,
+            dataset=(
+                self.test_data
+                if self.hparams.test_size < 0
+                else Subset(self.test_data, range(0, self.hparams.test_size))
+            ),
             batch_size=self.batch_size,
             shuffle=False,
             num_workers=cpu_count(),
@@ -146,9 +157,7 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
             weight_decay=self.hparams.weight_decay,
         )
         scheduler = get_linear_schedule_with_warmup(
-            opt,
-            steps * self.hparams.warmup_ratio,
-            steps,
+            opt, steps * self.hparams.warmup_ratio, steps,
         )
         return {
             "optimizer": opt,
@@ -180,10 +189,7 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
         )
         val_accuracy = torch.FloatTensor([val_accuracy.sum().item() / total_examples])
         self.log_dict(
-            {
-                "Loss/Validation": avg_val_loss,
-                "Accuracy/Validation": val_accuracy,
-            },
+            {"Loss/Validation": avg_val_loss, "Accuracy/Validation": val_accuracy,},
             prog_bar=True,
         )
 
@@ -201,11 +207,7 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
         self.log_dict(log, prog_bar=True)
 
     def forward(
-        self,
-        input_ids,
-        attention_masks,
-        mlm_labels,
-        y=None,
+        self, input_ids, attention_masks, mlm_labels, y=None,
     ):
         num_examples = input_ids.shape[0]
         num_hypothesis = input_ids.shape[1]
