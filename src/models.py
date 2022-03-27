@@ -7,8 +7,6 @@ from transformers.optimization import AdamW, get_linear_schedule_with_warmup
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.metrics.functional import accuracy, f1_score
-import torch_xla
-import torch_xla.core.xla_model as xm
 
 from data import CQADataMixin, ARCTDataMixin
 from loss import ssm_loss
@@ -212,16 +210,16 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
         num_examples = input_ids.shape[0]
         num_hypothesis = input_ids.shape[1]
         ssm = torch.zeros([num_examples, num_hypothesis], dtype=torch.float32).to(
-            device=xm.xla_device()
+            self.device
         )
-        preds = torch.zeros(num_examples, dtype=torch.int32).to(device=xm.xla_device())
+        preds = torch.zeros(num_examples, dtype=torch.int32).to(self.device)
 
         for i in range(num_examples):
             for j in range(num_hypothesis):
                 idxs = torch.nonzero(
                     (input_ids[i, j, :].sum(dim=1) != 0).long()
                 ).flatten()
-                prem_score = torch.zeros(idxs.shape[0]).to(device=xm.xla_device())
+                prem_score = torch.zeros(idxs.shape[0]).to(self.device)
 
                 for cur_idxs in idxs.split(self.hparams.forward_pass_size):
                     outputs = self.roberta(
