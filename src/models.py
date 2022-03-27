@@ -6,7 +6,7 @@ import transformers
 from transformers.optimization import AdamW, get_linear_schedule_with_warmup
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
-from torchmetrics import Accuracy, F1_Score
+from pytorch_lightning.metrics.functional import accuracy, f1_score
 
 from data import CQADataMixin, ARCTDataMixin
 from loss import ssm_loss
@@ -158,7 +158,7 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
     def training_step(self, batch, _):
         input_ids, attention_masks, mlm_labels, y = batch
         loss, _, preds = self.forward(input_ids, attention_masks, mlm_labels, y=y)
-        accuracy_score = Accuracy(preds, y, num_classes=self.NUM_HYPOTHESIS)
+        accuracy_score = accuracy(preds, y, num_classes=self.NUM_HYPOTHESIS)
         log = {"Loss/Train": loss, "Accuracy/Train": accuracy_score}
         self.log_dict(log, prog_bar=True)
         return {"loss": loss}
@@ -195,8 +195,8 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
     def test_epoch_end(self, outputs):
         y_pred = torch.cat([x["y_pred"] for x in outputs], dim=0)
         y = torch.cat([x["y"] for x in outputs], dim=0).flatten()
-        accuracy_score = Accuracy(y_pred, y, num_classes=self.NUM_HYPOTHESIS)
-        f1 = F1_Score(y_pred, y)
+        accuracy_score = accuracy(y_pred, y, num_classes=self.NUM_HYPOTHESIS)
+        f1 = f1_score(y_pred, y)
         log = {"Test/Accuracy": accuracy_score, "Test/f1": f1}
         self.log_dict(log, prog_bar=True)
 
