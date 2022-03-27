@@ -6,7 +6,7 @@ import transformers
 from transformers.optimization import AdamW, get_linear_schedule_with_warmup
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
-from pytorch_lightning.metrics.functional import accuracy, f1_score
+from torchmetrics import accuracy, f1_score
 
 from data import CQADataMixin, ARCTDataMixin
 from loss import ssm_loss
