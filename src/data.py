@@ -193,7 +193,7 @@ class CQADataMixin:
         self.test_data = self.val_data
 
     def prepare_data(self):
-        #ds = load_dataset("commonsense_qa")
+        print(os.getcwd())
         ds = DatasetDict.load_from_disk("../../conceptnet_questions/dataset_dict.json")
         self.load_or_encode_data(ds)
 
