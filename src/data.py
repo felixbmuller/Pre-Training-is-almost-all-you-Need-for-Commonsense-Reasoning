@@ -194,7 +194,7 @@ class CQADataMixin:
         self.test_data = self.val_data
 
     def prepare_data(self):
-        ds = DatasetDict.load_from_disk("../../conceptnet_generated_questions")
+        ds = DatasetDict.load_from_disk("../../conceptnet_questions800")
         # ds = datasets.DatasetDict({
         #     "train": datasets.Dataset.from_json("./data/conceptnet_ds_train.json"),
         #     "validation": datasets.Dataset.from_json("./data/conceptnet_ds_validation.json")})
@@ -202,7 +202,7 @@ class CQADataMixin:
 
     def get_max_sentence_sizes(self):
         #ds = load_dataset("commonsense_qa")
-        ds = DatasetDict.load_from_disk("../../conceptnet_generated_questions")
+        ds = DatasetDict.load_from_disk("../../conceptnet_questions800")
         # ds = datasets.DatasetDict({
         #     "train": datasets.Dataset.from_json("./data/conceptnet_ds_train.json"),
         #     "validation": datasets.Dataset.from_json("./data/conceptnet_ds_validation.json")})
