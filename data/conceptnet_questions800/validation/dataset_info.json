@@ -1,0 +1,51 @@
+{
+  "builder_name": null,
+  "citation": "",
+  "config_name": null,
+  "dataset_size": null,
+  "description": "",
+  "download_checksums": null,
+  "download_size": null,
+  "features": {
+    "answerKey": {
+      "_type": "Value",
+      "dtype": "string",
+      "id": null
+    },
+    "choices": {
+      "label": {
+        "_type": "Sequence",
+        "feature": {
+          "_type": "Value",
+          "dtype": "string",
+          "id": null
+        },
+        "id": null,
+        "length": -1
+      },
+      "text": {
+        "_type": "Sequence",
+        "feature": {
+          "_type": "Value",
+          "dtype": "string",
+          "id": null
+        },
+        "id": null,
+        "length": -1
+      }
+    },
+    "question": {
+      "_type": "Value",
+      "dtype": "string",
+      "id": null
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "post_processed": null,
+  "post_processing_size": null,
+  "size_in_bytes": null,
+  "splits": null,
+  "supervised_keys": null,
+  "version": null
+}
