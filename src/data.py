@@ -194,12 +194,12 @@ class CQADataMixin:
 
     def prepare_data(self):
         print(os.getcwd())
-        ds = DatasetDict.load_from_disk("../../conceptnet_questions/dataset_dict.json")
+        ds = DatasetDict.load_from_disk("../../conceptnet_questions")
         self.load_or_encode_data(ds)
 
     def get_max_sentence_sizes(self):
         #ds = load_dataset("commonsense_qa")
-        ds = DatasetDict.load_from_disk("../../conceptnet_questions/dataset_dict.json")
+        ds = DatasetDict.load_from_disk("../../conceptnet_questions")
         out = {}
 
         for partition in ["train", "validation"]:
