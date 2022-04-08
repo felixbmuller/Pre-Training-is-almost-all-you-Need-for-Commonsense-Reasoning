@@ -1,3 +1,4 @@
+import random
 import warnings
 from os import cpu_count
 
@@ -224,18 +225,19 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
                 prem_score = torch.zeros(idxs.shape[0]).to(self.device)
 
                 for cur_idxs in idxs.split(self.hparams.forward_pass_size):
-                    print('Input IDs')
+                    rand_num = random.random()
+                    print('Input IDs ' + str(rand_num))
                     print(input_ids[i, j, cur_idxs])
-                    print('Attention Masks')
+                    print('Attention Masks ' + str(rand_num))
                     print(attention_masks[i, j, cur_idxs])
-                    print('MLM Labels')
+                    print('MLM Labels ' + str(rand_num))
                     print(mlm_labels[i, j, cur_idxs])
                     outputs = self.roberta(
                         input_ids=input_ids[i, j, cur_idxs],
                         attention_mask=attention_masks[i, j, cur_idxs],
                         labels=mlm_labels[i, j, cur_idxs],
                     )
-                    print('Loss')
+                    print('Loss ' + str(rand_num))
                     print(outputs["loss"])
                     prem_score[cur_idxs] = outputs["loss"]
                 ssm[i, j] = prem_score.sum()
