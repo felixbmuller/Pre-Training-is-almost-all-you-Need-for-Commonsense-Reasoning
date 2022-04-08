@@ -224,6 +224,12 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
                 prem_score = torch.zeros(idxs.shape[0]).to(self.device)
 
                 for cur_idxs in idxs.split(self.hparams.forward_pass_size):
+                    print('Input IDs')
+                    print(input_ids[i, j, cur_idxs])
+                    print('Attention Masks')
+                    print(attention_masks[i, j, cur_idxs])
+                    print('MLM Labels')
+                    print(mlm_labels[i, j, cur_idxs])
                     outputs = self.roberta(
                         input_ids=input_ids[i, j, cur_idxs],
                         attention_mask=attention_masks[i, j, cur_idxs],
