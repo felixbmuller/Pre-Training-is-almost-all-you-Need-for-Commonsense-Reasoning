@@ -235,6 +235,8 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
                         attention_mask=attention_masks[i, j, cur_idxs],
                         labels=mlm_labels[i, j, cur_idxs],
                     )
+                    print('Loss')
+                    print(outputs["loss"])
                     prem_score[cur_idxs] = outputs["loss"]
                 ssm[i, j] = prem_score.sum()
             preds[i] = ssm[i].argmin()
