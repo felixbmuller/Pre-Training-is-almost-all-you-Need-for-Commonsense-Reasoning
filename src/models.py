@@ -248,11 +248,17 @@ class PlausibilityRankingRoBERTa(pl.LightningModule):
             preds,
         )
 
+        print('SSM loss')
+        print(ssm_loss(ssm, y, self.hparams.loss_threshold))
+
         if y is not None:
             outs = (
                 ssm_loss(ssm, y, self.hparams.loss_threshold),
                 *outs,
             )
+
+        print('Outs')
+        print(outs)
         return outs
 
     def prepare_data(self):
